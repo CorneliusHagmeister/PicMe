@@ -4,19 +4,6 @@
 import { Card, CardBody } from "@nextui-org/react";
 import { motion, useDragControls } from "framer-motion";
 
-const sliderVariants = {
-  incoming: (direction: any) => ({
-    x: direction > 0 ? "100%" : "-100%",
-    scale: 1.2,
-    opacity: 0,
-  }),
-  active: { x: 0, scale: 1, opacity: 1 },
-  exit: (direction: any) => ({
-    x: direction > 0 ? "-100%" : "100%",
-    scale: 1,
-    opacity: 0.2,
-  }),
-};
 const sliderTransition = {
   duration: 0.5,
   ease: [0.56, 0.03, 0.12, 1.04],
@@ -36,8 +23,7 @@ export default function SwipeableCard({
   className,
   onSwipeRight,
 }: SwipeableCardProps) {
-  const dragControls = useDragControls();
-  const dragEndHandler = (dragInfo: any) => {
+  const dragEndHandler = (event: any, dragInfo: any) => {
     const draggedDistance = dragInfo.offset.x;
     const swipeThreshold = 150;
     if (draggedDistance > swipeThreshold) {
@@ -49,19 +35,20 @@ export default function SwipeableCard({
   };
   return (
     <motion.div
-      className={`flex-grow flex absolute top-0 right-0 left-0 bottom-0 ${className}`}
-      initial
-      drag={true}
+      className={`flex-grow flex absolute top-0 right-0 left-0 bottom-0 `}
+      initial={true}
+      drag
       dragElastic={1}
       animate="active"
       exit="exit"
       transition={sliderTransition}
       //End of the window either side
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      onDragEnd={(_, dragInfo) => dragEndHandler(dragInfo)}
+      onDragEnd={(event, dragInfo) => dragEndHandler(event, dragInfo)}
     >
-      <Card className="py-2 flex-grow bg-gray-100" shadow="sm">
-        <CardBody className="py-2 flex flex-col justify-center">
+      <Card className="p-2 flex-grow bg-gray-100" shadow="sm">
+        {/* For some reason CardBody and dragging don't get along */}
+        <div className="h-full flex flex-col justify-center">
           {/** eslint-disable-next-line @next/next/no-img-element**/}
           <img
             draggable="false"
@@ -69,7 +56,7 @@ export default function SwipeableCard({
             className="object-cover rounded-xl "
             src={source}
           />
-        </CardBody>
+        </div>
       </Card>
     </motion.div>
   );
